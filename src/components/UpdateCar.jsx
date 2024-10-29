@@ -3,23 +3,16 @@ import { Dialog, DialogTitle, DialogActions, Button } from "@mui/material";
 import CarDialogContent from "./CarDialogContent";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { postCar } from "../utils/api";
+import { putCar } from "../utils/api";
 
-function AddCar() {
+function UpdateCar({ currentCar }) {
+  const [car, setCar] = useState(currentCar);
   const [open, setOpen] = useState(false);
-  const [car, setCar] = useState({
-    brand: "",
-    model: "",
-    color: "",
-    fuel: "",
-    modelYear: 0,
-    price: 0,
-  });
 
   const queryClient = useQueryClient();
 
-  const addMutation = useMutation({
-    mutationFn: postCar,
+  const updateMutation = useMutation({
+    mutationFn: putCar,
     onSuccess: queryClient.invalidateQueries("cars"),
   });
 
@@ -37,9 +30,7 @@ function AddCar() {
 
   return (
     <>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Add Car
-      </Button>
+      <Button onClick={handleClickOpen}>Edit</Button>
       <Dialog
         open={open}
         onClose={handleClose}
@@ -47,7 +38,7 @@ function AddCar() {
           component: "form",
           onSubmit: (event) => {
             event.preventDefault();
-            addMutation.mutate(car);
+            updateMutation.mutate(car);
             handleClose();
           },
         }}
@@ -63,4 +54,4 @@ function AddCar() {
   );
 }
 
-export default AddCar;
+export default UpdateCar;
